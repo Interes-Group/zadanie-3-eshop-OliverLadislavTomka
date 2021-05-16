@@ -83,6 +83,7 @@ public class TestController {
     public ResponseEntity<ProductAmountResponse> setAmount(@PathVariable("id") Long id, @RequestBody ProductRequest request){
         try {
             var product = service.findById(id);
+            service.updateAmount(product,request);
             return new ResponseEntity<>(new ProductAmountResponse(product), HttpStatus.OK);
         } catch (NotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

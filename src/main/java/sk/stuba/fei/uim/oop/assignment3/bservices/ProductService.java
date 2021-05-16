@@ -68,4 +68,10 @@ public class ProductService implements  IProductService{
         if (product.isEmpty()) throw new NotFoundException("Product with " + id + "was not found!");
         return new ProductAmountResponse(product.get());
     }
+
+    @Override
+    public ProductAmountResponse updateAmount(Product product, ProductRequest request) {
+        product.setAmount(product.getAmount() + request.getAmount());
+        return new ProductAmountResponse(product);
+    }
 }
