@@ -20,4 +20,5 @@ public class ProductResponse {
         this.unit = product.getUnit();
         this.price = product.getPrice();
     }
+
 }
