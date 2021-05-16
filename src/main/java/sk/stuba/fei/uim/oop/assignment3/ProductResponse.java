@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ProductResponse {
+    private long id;
     private String name;
     private String description;
     private Long amount;
@@ -12,6 +13,7 @@ public class ProductResponse {
     private float price;
 
     public ProductResponse(Product product) {
+        this.id = product.getId();
         this.name = product.getName();
         this.description = product.getDescription();
         this.amount = product.getAmount();
