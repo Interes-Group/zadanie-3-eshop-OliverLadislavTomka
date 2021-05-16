@@ -1,7 +1,10 @@
 package sk.stuba.fei.uim.oop.assignment3.acontrollers;
 
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.oop.assignment3.ProductRequest;
 import sk.stuba.fei.uim.oop.assignment3.ProductResponse;
@@ -30,8 +33,18 @@ public class TestController {
     }
 
     @PostMapping
-    public ProductResponse addProduct(@RequestBody ProductRequest request){
-        return new ProductResponse(this.service.create(request));
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest request){
+        return new ResponseEntity<>(new ProductResponse(this.service.create(request)), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable("id") Long id){
+        try {
+            var product = service.findById(id);
+            return new ResponseEntity<>(new ProductResponse(product), HttpStatus.OK);
+        } catch (NotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 

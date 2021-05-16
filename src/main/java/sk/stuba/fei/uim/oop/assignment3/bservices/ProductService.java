@@ -1,14 +1,13 @@
 package sk.stuba.fei.uim.oop.assignment3.bservices;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import sk.stuba.fei.uim.oop.assignment3.Product;
 import sk.stuba.fei.uim.oop.assignment3.ProductRequest;
-import sk.stuba.fei.uim.oop.assignment3.ProductResponse;
 import sk.stuba.fei.uim.oop.assignment3.crepositories.ProductRepository;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService implements  IProductService{
@@ -26,7 +25,6 @@ public class ProductService implements  IProductService{
     }
 
 
-
     @Override
     public Product create(ProductRequest request){
         Product newProduct = new Product();
@@ -38,4 +36,10 @@ public class ProductService implements  IProductService{
         return this.repository.save(newProduct);
     }
 
+    @Override
+    public Product findById(Long id) throws NotFoundException {
+        Optional<Product> product = repository.findById(id);
+        if (product.isEmpty()) throw new NotFoundException("Product with " + id + "was not found!");
+        return product.get();
+    }
 }
