@@ -44,12 +44,13 @@ public class CartController {
         }
     }
 
+
     @PostMapping("/{id}/add")
-    public ResponseEntity<CartResponse> addProductToCart(@PathVariable("id") Long id, @RequestBody ProductInCartRequest request){
+    public ResponseEntity<CartResponse> addProductToCart(@PathVariable("id") Long id, @RequestBody ProductInCart request){
         try {
-            var cart = cartService.adddProductToCart(id, request);
             if (cartService.findById(id).isPayed()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             if (productService.findById(request.getProductId()).getAmount() < request.getAmount()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            var cart = cartService.adddProductToCart(id, request);
             return new ResponseEntity<>(new CartResponse(cart),HttpStatus.OK);
         } catch (NotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

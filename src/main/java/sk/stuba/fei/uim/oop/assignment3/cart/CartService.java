@@ -1,16 +1,12 @@
 package sk.stuba.fei.uim.oop.assignment3.cart;
 
-
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import sk.stuba.fei.uim.oop.assignment3.product.Product;
 import sk.stuba.fei.uim.oop.assignment3.product.ProductRepository;
-
 import java.util.ArrayList;
 import java.util.Optional;
-
 
 @Service
 public class CartService implements ZCartService{
@@ -22,7 +18,6 @@ public class CartService implements ZCartService{
     private ProductRepository repositary;
 
     public CartService(ProductRepository repositary,CartRepository cartRepository) { this.repositary = repositary;this.cartRepository = cartRepository; }
-
 
     @Override
     public Cart create() {
@@ -48,20 +43,19 @@ public class CartService implements ZCartService{
     }
 
     @Override
-    public Cart adddProductToCart(Long id, ProductInCartRequest request) throws NotFoundException {
+    public Cart adddProductToCart(Long id, ProductInCart request) throws NotFoundException {
         Optional<Product> productOptional = repositary.findById(request.getProductId());
         Cart cart = cartRepository.findById(id).get();
-        //ak produkt s id neexistuje
-        //if (productOptional.isEmpty()) throw new NotFoundException("Product with this id doesnt exist");
-        //ak vyzadovany amount je vacsi ako je available
-        //if (productOptional.get().getAmount() > request.getAmount()) throw new NotFoundException("Product with this id doesnt exist");//HttpClientErrorException.BadRequest();
-        // ak je cart uz zaplateny
-        //if (cart.isPayed()) throw new NotFoundException("Product with this id doesnt exist");//HttpClientErrorException.BadRequest();
-
-
+        if (productOptional.isEmpty()) throw new NotFoundException("Product with this id doesnt exist");
+        for (ProductInCart pic: cart.getShoppingList()) {
+            if (pic.getProductId().equals(request.getProductId())){
+                pic.setAmount(pic.getAmount()+ request.getAmount());
+                this.repositary.findById(request.getProductId()).get().setAmount(this.repositary.findById(request.getProductId()).get().getAmount() - request.getAmount());
+                return cart;
+            }
+        }
+        cart.getShoppingList().add(request);
+        this.repositary.findById(request.getProductId()).get().setAmount(this.repositary.findById(request.getProductId()).get().getAmount() - request.getAmount());
         return cart;
     }
-
-
-
 }
