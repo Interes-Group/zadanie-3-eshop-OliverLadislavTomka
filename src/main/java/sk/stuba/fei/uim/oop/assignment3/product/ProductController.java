@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.oop.assignment3.acontrollers;
+package sk.stuba.fei.uim.oop.assignment3.product;
 
 
 import javassist.NotFoundException;
@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.stuba.fei.uim.oop.assignment3.ProductAmountResponse;
-import sk.stuba.fei.uim.oop.assignment3.ProductRequest;
-import sk.stuba.fei.uim.oop.assignment3.ProductResponse;
-import sk.stuba.fei.uim.oop.assignment3.bservices.IProductService;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,11 +14,11 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
-public class TestController {
+public class ProductController {
 
 
     @Autowired
-    private IProductService service;
+    private ZProductService service;
 
     @GetMapping
     public List<ProductResponse> getAllProducts(){

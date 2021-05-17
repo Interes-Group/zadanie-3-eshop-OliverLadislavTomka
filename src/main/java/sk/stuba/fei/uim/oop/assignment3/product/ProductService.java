@@ -1,18 +1,15 @@
-package sk.stuba.fei.uim.oop.assignment3.bservices;
+package sk.stuba.fei.uim.oop.assignment3.product;
 
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sk.stuba.fei.uim.oop.assignment3.Product;
-import sk.stuba.fei.uim.oop.assignment3.ProductAmountResponse;
-import sk.stuba.fei.uim.oop.assignment3.ProductRequest;
-import sk.stuba.fei.uim.oop.assignment3.crepositories.ProductRepository;
+
 import java.util.List;
 import java.util.Optional;
 
 
 @Service
-public class ProductService implements  IProductService{
+public class ProductService implements ZProductService {
 
     @Autowired
     private ProductRepository repository;
@@ -62,16 +59,9 @@ public class ProductService implements  IProductService{
         return prod1;
     }
 
-    @Override
-    public ProductAmountResponse getAmount(Long id) throws NotFoundException {
-        Optional<Product> product = repository.findById(id);
-        if (product.isEmpty()) throw new NotFoundException("Product with " + id + "was not found!");
-        return new ProductAmountResponse(product.get());
-    }
 
     @Override
-    public ProductAmountResponse updateAmount(Product product, ProductRequest request) {
+    public void updateAmount(Product product, ProductRequest request) {
         product.setAmount(product.getAmount() + request.getAmount());
-        return new ProductAmountResponse(product);
     }
 }
