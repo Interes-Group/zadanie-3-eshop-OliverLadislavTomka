@@ -8,4 +8,5 @@ public interface ZCartService {
     Cart findById(Long id) throws NotFoundException;
     void deleteById(Long id) throws NotFoundException;
     Cart adddProductToCart(Long id, ProductInCart request) throws NotFoundException ;
+    String payForCart(Long id) throws NotFoundException;
 }

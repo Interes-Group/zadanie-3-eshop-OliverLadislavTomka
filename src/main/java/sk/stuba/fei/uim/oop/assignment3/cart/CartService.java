@@ -58,4 +58,16 @@ public class CartService implements ZCartService{
         this.repositary.findById(request.getProductId()).get().setAmount(this.repositary.findById(request.getProductId()).get().getAmount() - request.getAmount());
         return cart;
     }
+
+    @Override
+    public String payForCart(Long id) throws NotFoundException {
+        if (cartRepository.findById(id).isEmpty()) throw new NotFoundException("Cart with this ID doesnt exist");
+        int sum = 0;
+        Cart cart = cartRepository.findById(id).get();
+        for (ProductInCart pic :cart.getShoppingList()) {
+            sum+= repositary.findById(pic.getProductId()).get().getPrice() * pic.getAmount();
+        }
+        cartRepository.findById(id).get().setPayed(true);
+        return "" + sum;
+    }
 }

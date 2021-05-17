@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import sk.stuba.fei.uim.oop.assignment3.product.ProductService;
 
 @RestController
@@ -53,6 +52,17 @@ public class CartController {
             var cart = cartService.adddProductToCart(id, request);
             return new ResponseEntity<>(new CartResponse(cart),HttpStatus.OK);
         } catch (NotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{id}/pay")
+    public ResponseEntity<String> payCart(@PathVariable("id") Long id){
+        try {
+            if (cartService.findById(id).isPayed()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            String odpoved = cartService.payForCart(id);
+            return new ResponseEntity<>(odpoved,HttpStatus.OK);
+        } catch(NotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
