@@ -42,11 +42,14 @@ public class CartService implements ZCartService{
         this.cartRepository.deleteById(id);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public Cart adddProductToCart(Long id, ProductInCart request) throws NotFoundException {
         Optional<Product> productOptional = repositary.findById(request.getProductId());
-        Cart cart = cartRepository.findById(id).get();
+        Cart cart = null;
+        if (cartRepository.findById(id).isPresent()) cart = cartRepository.findById(id).get();
         if (productOptional.isEmpty()) throw new NotFoundException("Product with this id doesnt exist");
+        assert cart != null;
         for (ProductInCart pic: cart.getShoppingList()) {
             if (pic.getProductId().equals(request.getProductId())){
                 pic.setAmount(pic.getAmount()+ request.getAmount());
@@ -65,7 +68,7 @@ public class CartService implements ZCartService{
         int sum = 0;
         Cart cart = cartRepository.findById(id).get();
         for (ProductInCart pic :cart.getShoppingList()) {
-            sum+= repositary.findById(pic.getProductId()).get().getPrice() * pic.getAmount();
+            if (repositary.findById(pic.getProductId()).isPresent())  sum+= repositary.findById(pic.getProductId()).get().getPrice() * pic.getAmount();
         }
         cartRepository.findById(id).get().setPayed(true);
         return "" + sum;

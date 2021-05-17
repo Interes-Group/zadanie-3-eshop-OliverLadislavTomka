@@ -16,19 +16,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/product")
 public class ProductController {
 
-
     @Autowired
     private ZProductService service;
 
     @GetMapping
     public List<ProductResponse> getAllProducts(){
         return this.service.getAll().stream().map(ProductResponse::new).collect(Collectors.toList());
-
-        /*var result = new ArrayList<ProductResponse>();
-        for(Product p : this.service.getAll()) {
-            result.add(new ProductResponse(p));
-        }
-        return result;*/
     }
 
     @PostMapping
