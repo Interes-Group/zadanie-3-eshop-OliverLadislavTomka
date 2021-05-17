@@ -5,5 +5,7 @@ import javassist.NotFoundException;
 
 public interface ZCartService {
     Cart create();
-    //findById(Long id) throws NotFoundException;
+    Cart findById(Long id) throws NotFoundException;
+    void deleteById(Long id) throws NotFoundException;
+    Cart adddProductToCart(Long id, ProductInCartRequest request) throws NotFoundException ;
 }
