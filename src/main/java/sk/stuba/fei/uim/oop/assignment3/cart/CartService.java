@@ -3,11 +3,8 @@ package sk.stuba.fei.uim.oop.assignment3.cart;
 import javassist.NotFoundException;
 import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.oop.assignment3.product.Product;
-import sk.stuba.fei.uim.oop.assignment3.product.ProductRepository;
 import sk.stuba.fei.uim.oop.assignment3.product.ProductService;
 
 import java.util.ArrayList;
@@ -21,8 +18,6 @@ public class CartService implements ZCartService{
 
     @Autowired
     public ProductService productService;
-
-    //public CartService(ProductRepository repositary,CartRepository cartRepository) { this.productService = productService;this.cartRepository = cartRepository; }
 
     @Override
     public Cart create() {

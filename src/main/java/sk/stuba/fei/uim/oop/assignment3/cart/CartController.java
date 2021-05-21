@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import sk.stuba.fei.uim.oop.assignment3.product.ProductService;
 
 @RestController
 @RequestMapping("/cart")
@@ -16,9 +14,6 @@ public class CartController {
 
     @Autowired
     private ZCartService cartService;
-
-    @Autowired
-    private ProductService productService;
 
     @PostMapping
     public ResponseEntity<CartResponse> createCart(){
