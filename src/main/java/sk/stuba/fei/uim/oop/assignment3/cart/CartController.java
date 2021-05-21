@@ -2,10 +2,12 @@ package sk.stuba.fei.uim.oop.assignment3.cart;
 
 
 import javassist.NotFoundException;
+import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import sk.stuba.fei.uim.oop.assignment3.product.ProductService;
 
 @RestController
@@ -47,23 +49,24 @@ public class CartController {
     @PostMapping("/{id}/add")
     public ResponseEntity<CartResponse> addProductToCart(@PathVariable("id") Long id, @RequestBody ProductInCart request){
         try {
-            if (cartService.findById(id).isPayed()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            if (productService.findById(request.getProductId()).getAmount() < request.getAmount()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            var cart = cartService.adddProductToCart(id, request);
-            return new ResponseEntity<>(new CartResponse(cart),HttpStatus.OK);
+                var cart = cartService.adddProductToCart(id, request);
+                return new ResponseEntity<>(new CartResponse(cart),HttpStatus.OK);
         } catch (NotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (BadHttpRequest e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
     }
 
     @GetMapping("/{id}/pay")
     public ResponseEntity<String> payCart(@PathVariable("id") Long id){
         try {
-            if (cartService.findById(id).isPayed()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            String odpoved = cartService.payForCart(id);
-            return new ResponseEntity<>(odpoved,HttpStatus.OK);
+            return new ResponseEntity<>(cartService.payForCart(id),HttpStatus.OK);
         } catch(NotFoundException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (BadHttpRequest e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

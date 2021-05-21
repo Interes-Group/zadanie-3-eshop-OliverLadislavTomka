@@ -1,10 +1,15 @@
 package sk.stuba.fei.uim.oop.assignment3.cart;
 
 import javassist.NotFoundException;
+import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.oop.assignment3.product.Product;
 import sk.stuba.fei.uim.oop.assignment3.product.ProductRepository;
+import sk.stuba.fei.uim.oop.assignment3.product.ProductService;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -15,9 +20,9 @@ public class CartService implements ZCartService{
     private CartRepository cartRepository;
 
     @Autowired
-    private ProductRepository repositary;
+    public ProductService productService;
 
-    public CartService(ProductRepository repositary,CartRepository cartRepository) { this.repositary = repositary;this.cartRepository = cartRepository; }
+    //public CartService(ProductRepository repositary,CartRepository cartRepository) { this.productService = productService;this.cartRepository = cartRepository; }
 
     @Override
     public Cart create() {
@@ -42,33 +47,31 @@ public class CartService implements ZCartService{
         this.cartRepository.deleteById(id);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
-    public Cart adddProductToCart(Long id, ProductInCart request) throws NotFoundException {
-        Optional<Product> productOptional = repositary.findById(request.getProductId());
-        Cart cart = null;
-        if (cartRepository.findById(id).isPresent()) cart = cartRepository.findById(id).get();
-        if (productOptional.isEmpty()) throw new NotFoundException("Product with this id doesnt exist");
-        assert cart != null;
+    public Cart adddProductToCart(Long id, ProductInCart request) throws NotFoundException, BadHttpRequest {
+        Product produkt = productService.findById(request.getProductId());
+        Cart cart = findById(id);
+        if (this.findById(id).isPayed() || produkt.getAmount() < request.getAmount()) throw new BadHttpRequest();
         for (ProductInCart pic: cart.getShoppingList()) {
             if (pic.getProductId().equals(request.getProductId())){
                 pic.setAmount(pic.getAmount()+ request.getAmount());
-                this.repositary.findById(request.getProductId()).get().setAmount(this.repositary.findById(request.getProductId()).get().getAmount() - request.getAmount());
+                this.productService.findById(request.getProductId()).setAmount(this.productService.findById(request.getProductId()).getAmount() - request.getAmount());
                 return cart;
             }
         }
         cart.getShoppingList().add(request);
-        this.repositary.findById(request.getProductId()).get().setAmount(this.repositary.findById(request.getProductId()).get().getAmount() - request.getAmount());
+        this.productService.findById(request.getProductId()).setAmount(this.productService.findById(request.getProductId()).getAmount() - request.getAmount());
         return cart;
     }
 
     @Override
-    public String payForCart(Long id) throws NotFoundException {
+    public String payForCart(Long id) throws NotFoundException,BadHttpRequest{
         if (cartRepository.findById(id).isEmpty()) throw new NotFoundException("Cart with this ID doesnt exist");
+        if (this.findById(id).isPayed()) throw new BadHttpRequest();
         int sum = 0;
         Cart cart = cartRepository.findById(id).get();
         for (ProductInCart pic :cart.getShoppingList()) {
-            if (repositary.findById(pic.getProductId()).isPresent())  sum+= repositary.findById(pic.getProductId()).get().getPrice() * pic.getAmount();
+            sum+= productService.findById(pic.getProductId()).getPrice() * pic.getAmount();
         }
         cartRepository.findById(id).get().setPayed(true);
         return "" + sum;
